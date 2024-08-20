@@ -30,3 +30,79 @@ adelie_summary <- penguins |>
             sample_size = n())   # find the mean, standard deviation, and sample size of flipper length for male and female adelie penguins
 ```
 
+```{r}
+# addins - datapasta - tribble to paste in 
+animals <- tibble::tribble(
+  ~location,   ~species,  ~maturity,
+   "lagoon",   "bobcat",    "adult",
+    "bluff",   "coyote", "juvenile",
+    "creek",      "fox",    "adult",
+     "oaks", "squirrel", "juvenile",
+    "bluff",   "bobcat",    "adult"
+  )
+
+sites <- tibble::tribble(
+  ~location,      ~full_site_name, ~jurisdiction,
+    "beach",       "Goleta Beach",     "SB City",
+   "lagoon",        "UCSB Lagoon",        "UCSB",
+    "bluff",       "Ellwood Mesa",     "SB City",
+     "oaks", "Fremont Campground",        "USFS"
+  )
+
+```
+
+# mutating joins
+```{r}
+full_join_example <- full_join(animals, sites)
+```
+
+```{r}
+left_join_exmaple <- left_join(animals, sites)
+```
+
+```{r}
+right_join_exmaple <- right_join(animals, sites)
+```
+
+```{r}
+inner_join_example <- inner_join(animals, sites)
+```
+
+#filtering joins
+```{r}
+semi_join_example <- semi_join(animals, sites)
+
+# another way to do the same thing
+semi_join_test <- animals |>
+  filter(location %in% sites$location)
+```
+
+```{r}
+anti_join_example <- anti_join(animals, sites, by = "location")
+
+#same as doing
+anti_join_test <- animals |>
+  filter(!location %in% sites$location)
+```
+
+```{r}
+sites <- sites |>
+  rename(place = location)   # if you rename the matching variable
+
+# and try a join
+test_join <- full_join(animals, sites) # it wont work
+
+# so we have to tell R what the match is using by = 
+test_join <- full_join(animals, sites, by = c("location" = "place"))
+
+# usually though, it's better to change variable names up front to avoid confusion down the line
+```
+
+
+
+
+
+
+
+
+
