@@ -1,0 +1,14 @@
+---
+title: "EDS 221: Day 7 Interactive"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+# load packages ----
+library(tidyverse)
+library(palmerpenguins)
+library(lubridate)
+```
+
+ˆ
