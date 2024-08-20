@@ -11,4 +11,22 @@ library(palmerpenguins)
 library(lubridate)
 ```
 
-ˆ
+```{r}
+# data wrangling refresher ----
+penguins_filtered <- penguins |>
+  filter(island %in% c("Biscoe", "Dream")) |>   #only include penguins at biscoe and dream islands
+  select(-year, -sex) |>   # remove year and sex variables
+  mutate(body_mass_kg = body_mass_g / 1000) |>   # add a new columns with penguim mass in kg
+  rename(location = island)   # rename island variable to location
+
+
+adelie_summary <- penguins |>
+  filter(species == "Adelie") |>   # limit to only adelie penguins
+  filter(!is.na(flipper_length_mm)) |>   # remove any observations where flipper length is na
+  filter(!is.na(sex)) |>   #
+  group_by(sex) |>   # group the data by sex
+  summarise(flipper_length_mean = mean(flipper_length_mm, na.rm = TRUE),
+            flipper_length_sd = sd(flipper_length_mm, na.rm = TRUE),
+            sample_size = n())   # find the mean, standard deviation, and sample size of flipper length for male and female adelie penguins
+```
+
