@@ -98,6 +98,148 @@ test_join <- full_join(animals, sites, by = c("location" = "place"))
 # usually though, it's better to change variable names up front to avoid confusion down the line
 ```
 
+# dates and times with {lubridate}
+```{r}
+my_date <- "03-05-1998"
+lubridate::mdy(my_date)  #mdy = month, day, year
+
+my_date <- "11/7/2003"
+lubridate::mdy(my_date)
+
+my_date <- "08-Jun-1974"
+lubridate::dmy(my_date)  #day, month, year
+
+my_date <- "19610518"
+lubridate::ymd(my_date)   #year, month, day
+
+
+# making it fail
+
+mdy("1942-08-30")  # wrong function for date format
+```
+
+```{r}
+time <- "2020-08-12 11:18"
+time <- lubridate::ymd_hm(time)
+class(time)  # class is POSIXct
+
+# convert to PDT
+with_tz(time, "America/Los_Angeles")
+
+#convert to AEST
+with_tz(time, "Australia/Sydney")
+
+# pull just the time
+my_time <- lubridate::ymd_hms(time)
+week(my_time)  # week 33
+day(my_time)  # 12th day
+hour(my_time)  # 11th hour
+minute(my_time)  # 18th minute
+second(my_time)  # no second data, assumes 0
+```
+
+```{r}
+# see how long it takes you to do analysis by storing the computers time at the start and the end
+comp_time_start <- Sys.time()
+comp_time_end <- Sys.time()
+# then take the difference
+comp_time_end - comp_time_start  # took 15 seconds
+```
+
+
+# date pieces as new columns
+```{r}
+urchin_counts <- tribble(
+  ~date, ~species, ~size_mm,
+  "10/3/2020", "purple", 55,
+  "10/4/2020", "red", 48,
+  "11/17/2020", "red", 67
+)
+
+# make the dates into typical format
+urchin_counts <- urchin_counts |>
+  mutate(date = lubridate::mdy(date)) |>
+  mutate(year = year(date),
+         month = month(date),
+         day = day(date))  # pull out individual pieces into their own columns
+
+# now you can do analysis based on individual parts of the date
+urchin_counts |>
+  group_by(year) |>
+  summarize(total = n())
+```
+
+# arithmetic on dates
+```{r}
+day_1 <- lubridate::ymd("2020-01-06")
+day_2 <- ymd("2020-05-18")
+day_3 <- ymd("2024-08-19")
+
+# create a time interval
+time_interval <- interval(day_1, day_2)
+
+# check the length in days
+time_length(time_interval, "day")
+
+# or check the interval between times this day
+time_length(interval(day_2, day_3), "year")
+```
+
+
+# Wrangling strings
+```{r}
+my_string <- "Teddy loves eating salmon and socks"
+
+# does the pattern "love" exist within the string?
+my_string |>
+  str_detect("love")   # TRUE
+
+my_string |>
+  str_detect("pup")   # FALSE
+```
+
+```{r}
+my_string <- c("burrito", "fish taco", "Taco salad"))
+
+# Does the vector element contain the pattern "fish"?
+my_string %>% str_detect("fish")   # FALSE
+```
+
+```{r}
+# use in combo with other functions
+skywalkers <- starwars |>
+  filter(str_detect(name, "Skywalker"))
+```
+
+```{r}
+firewalkers <- starwars |>
+  mutate(name = str_replace(name, pattern = "Sky", replacement = "Fire"))
+
+# useful if there were a repeated spelling error, annoying syntax, or with you want to make other updates throughout your data frame
+```
+
+```{r}
+feedback <- c("   I ate     some  nachos", "Wednesday morning     ")
+
+# Removes leading, trailing & duplicate interior whitespaces
+str_squish(feedback)
+
+# Removes leading & trailing whitespaces (but keeps interior)
+str_trim(feedback)
+
+str_to_lower(feedback)   # makes everything lowercase
+str_to_upper(feedback)   # all to caps
+str_to_title(feedback)   # caps each word like a title
+
+str_count(feedback, pattern = "nachos")
+
+```
+
+
+
+
+
+
 
 
 
